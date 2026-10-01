@@ -127,7 +127,7 @@ class Booking
             checkOut=Out;
         }
 
-        void input()
+        bool input()
         {
             int d,m,y;
 
@@ -139,13 +139,20 @@ class Booking
             cout<<"Enter guest name:"<<endl;
             getline(cin,guestName);
 
-            cout<<"Enter check in date:"<<endl;
+            cout<<"Enter check in date: ( DD MM YYYY)"<<endl;
             cin>>d>>m>>y;
             checkIn=BookingDate(d,m,y);
 
-            cout<<"Enter check out date:"<<endl;
+            cout<<"Enter check out date: (DD MM YYYY)"<<endl;
             cin>>d>>m>>y;
-            checkOut=BookingDate(d,m,y);    
+            checkOut=BookingDate(d,m,y); 
+            
+            if(checkOut<checkIn)
+            {
+                cout<<"Invalid booking! Check-out date cannot be earlier than check-in date"<<endl;
+                return false;
+            }
+            return true;
         }
         void display()
         {
@@ -293,9 +300,11 @@ int main()
             case 3:
             {
                 Booking b;
-                b.input();
-                b.display();
-                b.savetofile();
+                if(b.input())
+                {
+                 b.display();
+                 b.savetofile();
+                }
                 break;
             }
             case 4:
