@@ -186,6 +186,80 @@ class Booking
             cout<<"Booking saved successfully!"<<endl;
          }
 };
+class Cancel_Booking{
+    private:
+        int room_no;
+        char confirm;
+        string guest_name;
+        string gName;
+        string checkIn;
+        string checkout;
+        string separator;
+    public:
+        void input()
+        {
+            cout<<"Enter Room_no: ";
+            cin>>room_no;
+            cout<<"Enter Guest Name: ";
+            cin>>guest_name;
+        }
+        void cancel()
+        {
+            ifstream file("booking.txt");
+            ofstream temp("temp.txt");
+            bool found=false;
+            string line;
+            while(getline(file,line))
+            {
+                if(line==to_string(room_no))
+                {
+                    getline(file,gName);
+                    getline(file,checkIn);
+                    getline(file,checkout);
+                    getline(file,separator);
+                
+                if(gName==guest_name)
+                {
+                    cout<<"\nBooking Found:\n";
+                    cout<<"Room Number: "<<room_no<<endl;
+                    cout<<"Guest Name: "<<gName<<endl;
+                    cout<<checkIn<<endl;
+                    cout<<checkout<<endl;
+                    cout<<"\nAre you sure you want to cancel the booking? (y/n): ";
+                    cin>>confirm;
+                    if(confirm=='y'||confirm=='Y')
+                    {
+                        cout<<"Booking canceled sucessfully!\n";
+                        found=true;
+                        continue;
+                    }
+                    else
+                    {
+                         temp<<room_no<<endl<<gName<<endl<<checkIn<<endl<<checkout<<endl<<separator<<endl;
+                    }
+                }
+                else 
+                {
+                    temp<<room_no<<endl<<gName<<endl<<checkIn<<endl<<checkout<<endl<<separator<<endl;
+                }
+            }
+                else 
+                {
+                temp<<line<<endl; 
+            }
+        }
+
+        file.close();
+        temp.close();
+
+        remove("booking.txt");
+        rename("temp.txt","booking.txt");
+        if(!found)
+        {
+            cout<<"Booking not found!";
+        }
+        }
+};      
 
 
 int main()
@@ -223,6 +297,12 @@ int main()
                 b.display();
                 b.savetofile();
                 break;
+            }
+            case 4:
+            {
+                Cancel_Booking obj;
+                obj.input();
+                obj.cancel();
             }
             case 7:
             {
