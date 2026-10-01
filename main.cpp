@@ -141,15 +141,25 @@ class Booking
 
             cout<<"Enter check in date: ( DD MM YYYY)"<<endl;
             cin>>d>>m>>y;
+            if(d<1||d>31||m<1||m>12||y<2026)
+            {
+                cout<<"Invalid date!Try again"<<endl;
+                return false;
+            }
             checkIn=BookingDate(d,m,y);
 
             cout<<"Enter check out date: (DD MM YYYY)"<<endl;
             cin>>d>>m>>y;
+            if(d<1||d>31||m<1||m>12||y<2026)
+            {
+                cout<<"Invalid date!Try again"<<endl;
+                return false;
+            }
             checkOut=BookingDate(d,m,y); 
             
-            if(checkOut<checkIn)
+            if(checkOut<checkIn ||checkOut==checkIn)
             {
-                cout<<"Invalid booking! Check-out date cannot be earlier than check-in date"<<endl;
+                cout<<"Invalid booking! Check-out date should come after check-in date"<<endl;
                 return false;
             }
             return true;
