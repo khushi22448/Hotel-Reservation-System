@@ -189,6 +189,20 @@ class BookingDate
             file<<day<<"/"<<month<<"/"<<year;
         }
 };
+class RoomUnavailableException
+{
+    private:
+        string message;
+    public:
+        RoomUnavailableException(string msg)
+        {
+            message=msg;
+        }
+        string getMessage() const
+        {
+            return message;
+        }
+};
 
 class Booking
 {
@@ -196,21 +210,34 @@ class Booking
         int roomNumber;
         string guestName;
         BookingDate checkIn,checkOut;
-
+        double amount;
+        int nights;
         public:
         Booking()
         {
             roomNumber=0;
             guestName=" ";
+            amount=0;
+            nights=0;
         }
 
-        Booking(int room,string guest,BookingDate In,BookingDate Out)
+        Booking(int room,string guest,BookingDate In,BookingDate Out,double amt)
         {
             roomNumber=room;
             guestName=guest;
             checkIn=In;
             checkOut=Out;
+            amount=amt;
+            nights=checkOut-checkIn;
         }
+          int getRoom() const
+         {
+            return roomNumber;
+         }
+         double getAmount() const
+         {
+            return amount;
+         }
 
         bool input()
         {
@@ -244,23 +271,47 @@ class Booking
             
             if(checkOut<checkIn ||checkOut==checkIn)
             {
-                cout<<"Invalid booking! Check-out date should come after check-in date"<<endl;
-                return false;
+                throw RoomUnavailableException("Invalid booking! Check-out date should come after check-in date");
             }
+            nights=checkOut-checkIn;
+            ifstream file("rooms.txt");
+            if(!file)
+            {
+                cout<<"Error!File not opened"<<endl;
+            }
+            int no,price;
+            string type;
+            bool a;
+            bool found=false;
+            while(file>>no>>type>>price>>a)
+            {
+                if(no==roomNumber)
+                {
+                    amount=price*nights;
+                    found=true;
+                }
+            }
+            file.close();
+            if(!found)
+            {
+                throw RoomUnavailableException("Room not found!");
+            }
+            cout<<"Number of nights:"<<nights<<endl;
+            cout<<"Amount:"<<amount<<endl;
             return true;
         }
         void display()
         {
             cout<<"Room Number : "<<roomNumber<<endl;
             cout<<"Guest Name : "<<guestName<<endl;
-
             cout<<"Check-In : ";
             checkIn.display();
             cout<<endl;
-
             cout<<"Check-Out : ";
             checkOut.display();
             cout<<endl;
+            cout<<"Number of nights : "<<nights<<endl;
+            cout<<"Amount : "<<amount<<endl;
         }
         void savetofile()
         {
@@ -274,17 +325,15 @@ class Booking
 
             file<<roomNumber<<endl;
             file<<guestName<<endl;
-
             file<<"Check-In: ";
             checkIn.saveToFile(file);
             file<<endl;
-
             file<<"Check-Out: ";
             checkOut.saveToFile(file);
             file<<endl;
-
+            file<<"Number of nights:"<<nights<<endl;
+            file<<"Amount:"<<amount<<endl;
             file.close();
-
             cout<<"Booking saved successfully!"<<endl;
          }
 };
@@ -485,15 +534,29 @@ namespace use{
                    break;
                  }
                  case 3:
-                 {
-                  Booking b;
-                  if(b.input())
-                  {
-                    b.display();
-                    b.savetofile();
-                  }
-                  break;
-                 }
+                {
+                    Booking b;
+
+                      try
+                     {
+                        if(b.input())
+                        {
+                           b.display();
+                           b.savetofile();
+                           cout << "\nPress Enter to continue...";
+                           cin.ignore();
+                           cin.get();
+                        }
+                     }
+                      catch(RoomUnavailableException& e)
+                     {
+                         cout << "Booking failed: " << e.getMessage() << endl;
+                         cout << "\nPress Enter to continue...";
+                         cin.ignore();
+                         cin.get();
+                    }
+                    break;
+                }
                  case 4:
                  {
                   Cancel_Booking obj;
