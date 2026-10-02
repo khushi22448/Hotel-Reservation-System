@@ -566,7 +566,8 @@ namespace use{
         cin>>name;
         cout<<"Password: ";
         cin>>pass;
-
+    }
+}; 
 int main()
 {
     int choice=0;
