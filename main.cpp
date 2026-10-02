@@ -1,6 +1,91 @@
 #include<iostream>
 #include<fstream>
+#include<string>
+
 using namespace std;
+
+namespace uten{
+	const string UserFile = "user.txt";
+	
+	void clear(){
+		#ifdef _WIN32
+		  system("cls");
+		#else
+		  system("clear");
+		#endif
+	}
+	
+    int getNextId() {
+        ifstream in(UserFile);
+        int maxId = 0;
+        int id;
+        string username, password, email, phone;
+
+        while(in>>id>>username>>password>>email>>phone) {
+            if(id>maxId){
+              maxId = id;
+            }
+        }
+        return maxId + 1;
+    }
+    
+    bool usernameTaken(string name) {
+        ifstream in(UserFile);
+        int id;
+        string username, password, email, phone;
+
+        while(in>>id>>username>>password>>email>>phone){
+            if(username==name){
+			 return true;
+            }
+        }
+        return false;
+    }
+    
+    bool validEmail(string e) {
+        size_t at = e.find('@');
+        if(at==string::npos){
+          return false;
+		}
+        if(at==0){	
+		  return false;
+		}	
+        if(e.find('@',at + 1)!= string::npos){
+		    return false;
+		}
+
+        size_t dot = e.rfind('.');
+        
+        if(dot==string::npos){
+		  return false;
+		}	
+        if(dot< at + 2){
+		  return false;
+		}	
+        if ((e.size()-dot-1) < 2){
+		  return false;
+		}
+		
+        return true;
+    }
+    
+    bool validPhone(string p){
+        if(p.size()!=10){
+		  return false;
+		}
+        if(p[0]!='9' || p[1]!='8'){
+		  return false;
+		}
+        for(size_t i=0;i<p.size();i++){
+            if(p[i] < '0' || p[i] > '9'){
+			  return false;
+			}
+        }
+        return true;
+    }
+}
+
+using namespace uten;
 
 class Room{
     private:
@@ -276,60 +361,199 @@ class Cancel_Booking{
             cout<<"Booking not found!";
         }
         }
-};      
+};
 
+namespace use{
+	class User{
+		protected:
+			int user_id;
+			string username,password,email,phone;
+		    bool status=false;
+		public:
+			User(){}
+			User(string username,string password,string email,string phone,int id){
+				this->username=username;
+				this->password=password;
+				this->email=email;
+				this->phone=phone;
+				this->user_id=id;
+			}
+			friend void user_regis();
+			friend void user_login();
+	};
+    void user_regis(){
+    	clear();
+    	string user,pass,re_pass,email,phone;
+    	int id;
+    	id=getNextId();
+    	
+    	cout<<"Enter 'Username(No Spaces)': ";
+    	cin>>user;
+    	
+        while(usernameTaken(user)) {
+            cout<<endl<<"That username is already taken!!"<<endl;
+            cout<<endl<<"Re-enter 'Username': ";
+            cin>>user;
+        }
+    	
+    	do{   		
+    	cout<<endl<<"Enter 'Password': ";
+    	cin>>pass;
+    	
+    	cout<<endl<<"Re-enter 'Password': ";
+    	cin>>re_pass;
+    	
+    	if(pass!=re_pass){
+    		cout<<endl<<"Password does not match!!!"<<endl;
+		}
+		}while(pass!=re_pass);
+    	
+    	cout<<endl<<"Enter 'E-mail': ";
+    	cin>>email;
+    	while(!validEmail(email)){
+    		cout<<endl<<"Wrong format of email!!"<<endl;
+    		cout<<"enter 'E-mail': ";
+    		cin>>email;
+		}
+    	
+    	cout<<endl<<"Enter 'Phone Number': ";
+    	cin>>phone;
+    	while(!validPhone(phone)){
+     		cout<<endl<<"Wrong format of email!!"<<endl;
+    		cout<<"enter 'Phone Number': ";
+    		cin>>phone;	
+		}
+    	
+    	User o(user,pass,email,phone,id);
+    	
+    	fstream obj;
+    	obj.open(UserFile,ios::app);
+    	if(!obj){
+    		cout<<endl<<"No directory!!";
+    		return;
+		}
+		obj<<o.user_id<< " " <<o.username <<" " << o.password <<" " <<o.email <<" " <<o.phone <<"\n";
+		obj.close();
+		cout<<endl<<"Your Account is registered!!";
+	}
+	void user_login(){
+		clear();
+		string name,pass;
+		int choice=0;
+        cout<<"\n===Login===\n";
+        cout<<"Username: ";
+        cin>>name;
+        cout<<"Password: ";
+        cin>>pass;
 
-int main()
-{
-    int choice=0;
+        ifstream in(UserFile);
+        if(!in){
+            cout<<"No users registered yet!!";
+            return;
+        }
 
-    while(1)
-    {
-        cout<<"\n===Hotel Reservation System===\n";
-        cout<<"1.Add Room\n";
-        cout<<"2.Search Available Rooms\n";
-        cout<<"3.Book a Room\n";
-        cout<<"4.Cancel a Booking\n";
-        cout<<"5.Occupancy Report\n";
-        cout<<"6.Revenue Report\n";
-        cout<<"7.Exit\n";
+        User u;
 
-        cout<<"Enter your choice:";
-        cin>>choice;
-
-        switch(choice)
-        {
-            case 1:
-            {
-            Room obj1;
-            obj1.inputRoom();
-            obj1.savetofile();
-            obj1.displayRoom();
-            break;
-            }
-            case 3:
-            {
-                Booking b;
-                if(b.input())
-                {
-                 b.display();
-                 b.savetofile();
-                }
+        while(in>>u.user_id>>u.username>>u.password>>u.email>>u.phone){
+            if(u.username == name && u.password == pass){
+                u.status=true;
+                clear();
+                cout<<"Login successful.Welcome,"<<u.username<<"!\n";
                 break;
             }
-            case 4:
-            {
-                Cancel_Booking obj;
-                obj.input();
-                obj.cancel();
-            }
-            case 7:
-            {
-                return 0;
-            }
         }
-        
-    }
+        if(u.status==true){
+                  cout<<"\n===Hotel Reservation System===\n";
+                  cout<<"1.Add Room\n";
+                  cout<<"2.Search Available Rooms\n";
+                  cout<<"3.Book a Room\n";
+                  cout<<"4.Cancel a Booking\n";
+                  cout<<"5.Occupancy Report\n";
+                  cout<<"6.Revenue Report\n";
+                  cout<<"7.Exit\n";
+                  cout<<"Enter your choice:";
+                  cin>>choice;
+
+                switch(choice)
+                {
+                 case 1:
+                 {
+                   Room obj1;
+                   obj1.inputRoom();
+                   obj1.savetofile();
+                   obj1.displayRoom();
+                   break;
+                 }
+                 case 3:
+                 {
+                  Booking b;
+                  if(b.input())
+                  {
+                    b.display();
+                    b.savetofile();
+                  }
+                  break;
+                 }
+                 case 4:
+                 {
+                  Cancel_Booking obj;
+                  obj.input();
+                  obj.cancel();
+                  break;
+                 }
+                 case 7:
+                 {
+                  exit(0);
+                  break;
+                 }
+                }
+            }	
+		else{
+        cout<<"Wrong username or password!!";
+		in.close();
+		}
+	}	
+}
+
+using namespace use;
+
+void login_menu(){
+    	
+    int choice=0;
+    while(1)
+    {
+    	clear();
+        cout<<"\n===Login===\n";
+        cout<<"1.login\n";
+        cout<<"2.Register\n";
+        cout<<"3.Exit\n";
+        cout<<"Enter your choice:";
+        cin>>choice;
+        switch(choice){
+        	case 1:{
+        		clear();
+        		user_login();
+				break;
+			}
+			case 2:{
+				clear();
+			    user_regis();
+				break;
+			}
+			case 3:{
+				exit(0);
+				break;
+			}
+			default:{
+				cout << "Wrong input!!";
+				break;
+			}
+		}
+    }	
+    
+}
+int main()
+{
+    login_menu();
     return 0;
 }
-       
