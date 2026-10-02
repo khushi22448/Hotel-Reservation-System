@@ -1536,3 +1536,9 @@ Check-Out: 9/6/2026
 Number of nights:1
 Amount:3500
 >>>>>>> de3472ffcafa0d5c8e40da6ce7fe420399fa6f27
+101
+khushi
+Check-In: 12/4/2026
+Check-Out: 13/5/2026
+Number of nights:31
+Amount:372
