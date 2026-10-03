@@ -412,6 +412,40 @@ class Cancel_Booking{
         }
         }
 };
+class SearchBooking{
+    public:
+        void searchByRoomNo(int roomno)
+        {
+            ifstream file("booking.txt");
+            if(!file)
+            {
+                cout<<"EROR!File not opened."<<endl;
+                return;
+            }
+            string line;
+            bool found=false;
+            while(getline(file,line))
+            {
+                if(line==to_string(roomno))
+                {
+                    cout<<"\nBooking Found: \n";
+                    cout<<"Room Number: "<<line<<endl;
+                    getline(file, line); cout << "Guest Name: " << line << endl;
+                    getline(file, line); cout << line << endl; // Check-In
+                    getline(file, line); cout << line << endl; // Check-Out
+                    getline(file, line); cout << line << endl; // Nights
+                    getline(file, line); cout << line << endl;//amount
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+            {
+                cout<<"No booking found for room "<<roomno<<endl;
+            }
+            file.close();
+        }
+};
 
 namespace use{
 	class User{
@@ -533,7 +567,35 @@ namespace use{
                obj1.savetofile();  
                obj1.displayRoom();  
                break;  
-             }  
+             } 
+             case 2:
+             {
+                SearchBooking obj;
+                int option;
+                cout<<"1.Search by Room Number."<<endl;
+                cout<<"2.Search by Guest Name."<<endl;
+                cout<<"Enter your choice: ";
+                cin>>option;
+                if(option==1)
+                {
+                    int rno;
+                    cout<<"Enter Room number: ";
+                    cin>>rno;
+                    obj.searchByRoomNo(rno);
+                }
+                else if(option==2)
+                {
+                    string gname;
+                    cin.ignore();
+                    cout<<"Enter Guest Name: ";
+                    getline(cin,gname);
+                    
+                }
+                cout << "\nPress Enter to continue...";
+                cin.ignore();
+                cin.get();
+                break;
+             } 
              case 3:  
             {  
                 Booking b;  
@@ -618,5 +680,6 @@ while(1)
 }
 int main()
 {
-login_menu();return 0;
+login_menu();
+return 0;
 }
