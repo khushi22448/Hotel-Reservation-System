@@ -288,8 +288,14 @@ class Booking
             {
                 if(no==roomNumber)
                 {
-                    amount=price*nights;
                     found=true;
+                    if(a==false)
+                  {
+                     throw RoomUnavailableException("Room is already booked!");
+                  }    
+                   amount=price*nights;
+                   break;
+                    
                 }
             }
             file.close();
