@@ -190,7 +190,6 @@ class BookingDate
             year=y;
         }
 
-        // Checks real calendar dates (month lengths + leap years)
         static bool valid(int d,int m,int y,int minYear=1900)
         {
             if(y<minYear || y>9999 || m<1 || m>12 || d<1)
@@ -207,7 +206,6 @@ class BookingDate
             return d<=maxDay;
         }
 
-        // Converts date to an exact day number
         long long toDays() const
         {
             long long yy=year;
@@ -259,9 +257,6 @@ class BookingDate
         }
 };
 
-// ---------- shared helpers for booking.txt ----------
-
-// Reads the next booking record. Works with or without separator lines.
 bool readBooking(ifstream &f,int &room,string &guest,BookingDate &ci,BookingDate &co)
 {
     string line;
@@ -306,7 +301,6 @@ void writeBooking(ofstream &f,int room,const string &guest,const BookingDate &ci
     f<<"-----"<<endl;
 }
 
-// true if no existing booking overlaps [ci, co)
 bool roomFree(int roomNo,BookingDate ci,BookingDate co)
 {
     ifstream f("booking.txt");
@@ -324,7 +318,6 @@ bool roomFree(int roomNo,BookingDate ci,BookingDate co)
     return true;
 }
 
-// reads "DD MM YYYY" and validates it
 bool inputDate(BookingDate &dt,int minYear=1900)
 {
     int d,m,y;
