@@ -1,4 +1,3 @@
-
 #include<iostream>
 #include<fstream>
 #include<string>
@@ -175,6 +174,7 @@ class BookingDate
 {
     protected:
         int day,month,year;
+
     public:
         BookingDate()
         {
@@ -190,6 +190,7 @@ class BookingDate
             year=y;
         }
 
+        // Checks real calendar dates (month lengths + leap years)
         static bool valid(int d,int m,int y,int minYear=1900)
         {
             if(y<minYear || y>9999 || m<1 || m>12 || d<1)
@@ -206,6 +207,7 @@ class BookingDate
             return d<=maxDay;
         }
 
+        // Converts date to an exact day number
         long long toDays() const
         {
             long long yy=year;
@@ -256,21 +258,10 @@ class BookingDate
             file<<day<<"/"<<month<<"/"<<year;
         }
 };
-class RoomUnavailableException
-{
-    private:
-        string message;
-    public:
-        RoomUnavailableException(string msg)
-        {
-            message=msg;
-        }
-        string getMessage() const
-        {
-            return message;
-        }
-};
 
+// ---------- shared helpers for booking.txt ----------
+
+// Reads the next booking record. Works with or without separator lines.
 bool readBooking(ifstream &f,int &room,string &guest,BookingDate &ci,BookingDate &co)
 {
     string line;
@@ -315,6 +306,7 @@ void writeBooking(ofstream &f,int room,const string &guest,const BookingDate &ci
     f<<"-----"<<endl;
 }
 
+// true if no existing booking overlaps [ci, co)
 bool roomFree(int roomNo,BookingDate ci,BookingDate co)
 {
     ifstream f("booking.txt");
@@ -332,6 +324,7 @@ bool roomFree(int roomNo,BookingDate ci,BookingDate co)
     return true;
 }
 
+// reads "DD MM YYYY" and validates it
 bool inputDate(BookingDate &dt,int minYear=1900)
 {
     int d,m,y;
@@ -357,35 +350,21 @@ class Booking
         int roomNumber;
         string guestName;
         BookingDate checkIn,checkOut;
+
     public:
-        double amount;
-        int nights;
-        public:
         Booking()
         {
             roomNumber=0;
             guestName=" ";
-            amount=0;
-            nights=0;
         }
 
-        Booking(int room,string guest,BookingDate In,BookingDate Out,double amt)
+        Booking(int room,string guest,BookingDate In,BookingDate Out)
         {
             roomNumber=room;
             guestName=guest;
             checkIn=In;
             checkOut=Out;
-            amount=amt;
-            nights=checkOut-checkIn;
         }
-          int getRoom() const
-         {
-            return roomNumber;
-         }
-         double getAmount() const
-         {
-            return amount;
-         }
 
         bool input()
         {
@@ -427,7 +406,8 @@ class Booking
 
             if(!(checkIn<checkOut))
             {
-                throw RoomUnavailableException("Invalid booking! Check-out date should come after check-in date");
+                cout<<"Invalid booking! Check-out date should come after check-in date"<<endl;
+                return false;
             }
 
             if(!roomFree(roomNumber,checkIn,checkOut))
@@ -435,37 +415,6 @@ class Booking
                 cout<<"Room is already booked for these dates!"<<endl;
                 return false;
             }
-            nights=checkOut-checkIn;
-            ifstream file("rooms.txt");
-            if(!file)
-            {
-                cout<<"Error!File not opened"<<endl;
-            }
-            int no,price;
-            string type;
-            bool a;
-            bool found=false;
-            while(file>>no>>type>>price>>a)
-            {
-                if(no==roomNumber)
-                {
-                    found=true;
-                    if(a==false)
-                  {
-                     throw RoomUnavailableException("Room is already booked!");
-                  }    
-                   amount=price*nights;
-                   break;
-                    
-                }
-            }
-            file.close();
-            if(!found)
-            {
-                throw RoomUnavailableException("Room not found!");
-            }
-            cout<<"Number of nights:"<<nights<<endl;
-            cout<<"Amount:"<<amount<<endl;
             return true;
         }
 
@@ -473,14 +422,14 @@ class Booking
         {
             cout<<"Room Number : "<<roomNumber<<endl;
             cout<<"Guest Name : "<<guestName<<endl;
+
             cout<<"Check-In : ";
             checkIn.display();
             cout<<endl;
+
             cout<<"Check-Out : ";
             checkOut.display();
             cout<<endl;
-            cout<<"Number of nights : "<<nights<<endl;
-            cout<<"Amount : "<<amount<<endl;
         }
 
         void savetofile()
@@ -494,19 +443,8 @@ class Booking
             }
 
             writeBooking(file,roomNumber,guestName,checkIn,checkOut);
-              }
-
-            file<<roomNumber<<endl;
-            file<<guestName<<endl;
-            file<<"Check-In: ";
-            checkIn.saveToFile(file);
-            file<<endl;
-            file<<"Check-Out: ";
-            checkOut.saveToFile(file);
-            file<<endl;
-            file<<"Number of nights:"<<nights<<endl;
-            file<<"Amount:"<<amount<<endl;
             file.close();
+
             cout<<"Booking saved successfully!"<<endl;
         }
 };
@@ -779,40 +717,6 @@ class RevenueReport{
             cout<<"Total Revenue  : "<<totalRevenue<<endl;
         }
 };
-class SearchBooking{
-    public:
-        void searchByRoomNo(int roomno)
-        {
-            ifstream file("booking.txt");
-            if(!file)
-            {
-                cout<<"EROR!File not opened."<<endl;
-                return;
-            }
-            string line;
-            bool found=false;
-            while(getline(file,line))
-            {
-                if(line==to_string(roomno))
-                {
-                    cout<<"\nBooking Found: \n";
-                    cout<<"Room Number: "<<line<<endl;
-                    getline(file, line); cout << "Guest Name: " << line << endl;
-                    getline(file, line); cout << line << endl; // Check-In
-                    getline(file, line); cout << line << endl; // Check-Out
-                    getline(file, line); cout << line << endl; // Nights
-                    getline(file, line); cout << line << endl;//amount
-                    found = true;
-                    break;
-                }
-            }
-            if(!found)
-            {
-                cout<<"No booking found for room "<<roomno<<endl;
-            }
-            file.close();
-        }
-};
 
 namespace use{
     class User{
@@ -979,13 +883,9 @@ namespace use{
             waitKey();
             return;
         }
-         ifstream in(UserFile);  
-    if(!in){  
-        cout<<"No users registered yet!!";  
-        return;  
-    }  
 
-    User u;  
+        User u;
+
         while(in>>u.user_id>>u.username>>u.password>>u.email>>u.phone){
             if(u.username == name && u.password == pass){
                 u.status=true;
@@ -1057,114 +957,12 @@ namespace use{
             }
         }
     }
-
-    while(in>>u.user_id>>u.username>>u.password>>u.email>>u.phone){  
-        if(u.username == name && u.password == pass){  
-            u.status=true;  
-            clear();  
-            cout<<"Login successful.Welcome,"<<u.username<<"!\n";  
-            break;  
-        }  
-    }  
-    if(u.status==true){  
-              cout<<"\n===Hotel Reservation System===\n";  
-              cout<<"1.Add Room\n";  
-              cout<<"2.Search Available Rooms\n";  
-              cout<<"3.Book a Room\n";  
-              cout<<"4.Cancel a Booking\n";  
-              cout<<"5.Occupancy Report\n";  
-              cout<<"6.Revenue Report\n";  
-              cout<<"7.Exit\n";  
-              cout<<"Enter your choice:";  
-              cin>>choice;  
-
-            switch(choice)  
-            {  
-             case 1:  
-             {  
-               Room obj1;  
-               obj1.inputRoom();  
-               obj1.savetofile();  
-               obj1.displayRoom();  
-               break;  
-             } 
-             case 2:
-             {
-                SearchBooking obj;
-                int option;
-                cout<<"1.Search by Room Number."<<endl;
-                cout<<"2.Search by Guest Name."<<endl;
-                cout<<"Enter your choice: ";
-                cin>>option;
-                if(option==1)
-                {
-                    int rno;
-                    cout<<"Enter Room number: ";
-                    cin>>rno;
-                    obj.searchByRoomNo(rno);
-                }
-                else if(option==2)
-                {
-                    string gname;
-                    cin.ignore();
-                    cout<<"Enter Guest Name: ";
-                    getline(cin,gname);
-                    
-                }
-                cout << "\nPress Enter to continue...";
-                cin.ignore();
-                cin.get();
-                break;
-             } 
-             case 3:  
-            {  
-                Booking b;  
-
-                  try  
-                 {  
-                    if(b.input())  
-                    {  
-                       b.display();  
-                       b.savetofile();  
-                       cout << "\nPress Enter to continue...";  
-                       cin.ignore();  
-                       cin.get();  
-                    }  
-                 }  
-                  catch(RoomUnavailableException& e)  
-                 {  
-                     cout << "Booking failed: " << e.getMessage() << endl;  
-                     cout << "\nPress Enter to continue...";  
-                     cin.ignore();  
-                     cin.get();  
-                }  
-                break;  
-            }  
-             case 4:  
-             {  
-              Cancel_Booking obj;  
-              obj.input();  
-              obj.cancel();  
-              break;  
-             }  
-             case 7:  
-             {  
-              exit(0);  
-              break;  
-             }  
-            }  
-        }	  
-	else{  cout<<"Wrong username or password!!";  
-	in.close();  
-	}  
-}
 }
 
 using namespace use;
 
 void login_menu(){
 
-<<<<<<< HEAD
     int choice=0;
     while(1)
     {
@@ -1206,41 +1004,10 @@ void login_menu(){
             }
         }
     }
-int choice=0;  
-while(1)  
-{  
-	clear();  
-    cout<<"\n===Login===\n";  
-    cout<<"1.login\n";  
-    cout<<"2.Register\n";  
-    cout<<"3.Exit\n";  
-    cout<<"Enter your choice:";  
-    cin>>choice;  
-    switch(choice){  
-    	case 1:{  
-    		clear();  
-    		user_login();  
-			break;  
-		}  
-		case 2:{  
-			clear();  
-		    user_regis();  
-			break;  
-		}  
-		case 3:{  
-			exit(0);  
-			break;  
-		}  
-		default:{  
-			cout << "Wrong input!!";  
-			break;  
-		}  
-	}  
-}
 }
 
 int main()
 {
-login_menu();
-return 0;
+    login_menu();
+    return 0;
 }
