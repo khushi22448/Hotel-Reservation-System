@@ -126,24 +126,24 @@ class Room{
     public:
         bool inputRoom()
         {
-            cout<<"Enter Room Number: ";
+            cout<<"\033[33mEnter Room Number: \033[0m";
             cin>>room_no;
             if(!cin){
                 clearBadInput();
-                cout<<"Invalid room number!"<<endl;
+                cout<<"\033[31mInvalid room number!\033[0m"<<endl;
                 return false;
             }
             if(roomExists(room_no)){
                 cout<<"Room "<<room_no<<" already exists!"<<endl;
                 return false;
             }
-            cout<<"Enter Room Type (Single/Double/Suite): ";
+            cout<<"\033[33mEnter Room Type (Single/Double/Suite): \033[0m";
             cin>>type;
-            cout<<"Enter Price per Night: ";
+            cout<<"\033[33mEnter Price per Night: \033[0m";
             cin>>price;
             if(!cin || price<=0){
                 clearBadInput();
-                cout<<"Invalid price!"<<endl;
+                cout<<"\033[31mInvalid price!\033[0m"<<endl;
                 return false;
             }
             isAvailable=true;
@@ -161,12 +161,12 @@ class Room{
             ofstream file("rooms.txt",ios::app);
             if(!file)
             {
-                cout<<"ERROR! File not opened!";
+                cout<<"\033[31mERROR! File not opened!\033[0m";
                 return;
             }
             file<<room_no<<" "<<type<<" "<<price<<" "<<isAvailable<<endl;
             file.close();
-            cout<<"Room added successfully!"<<endl;
+            cout<<"\033[32mRoom added successfully!\033[0m"<<endl;
         }
 };
 
@@ -361,12 +361,12 @@ class Booking
 
         bool input()
         {
-            cout<<"Enter room number: ";
+            cout<<"\033[33mEnter room number: \033[0m";
             cin>>roomNumber;
             if(!cin)
             {
                 clearBadInput();
-                cout<<"Invalid room number!"<<endl;
+                cout<<"\033[31mInvalid room number!\033[0m"<<endl;
                 return false;
             }
             if(!roomExists(roomNumber))
@@ -377,21 +377,21 @@ class Booking
 
             cin.ignore(numeric_limits<streamsize>::max(),'\n');
 
-            cout<<"Enter guest name: ";
+            cout<<"\033[33mEnter guest name: \033[0m";
             getline(cin,guestName);
             if(guestName.empty())
             {
-                cout<<"Guest name cannot be empty!"<<endl;
+                cout<<"\033[31mGuest name cannot be empty!\033[0m"<<endl;
                 return false;
             }
 
-            cout<<"Enter check in date (DD MM YYYY): ";
+            cout<<"\033[33mEnter check in date (DD MM YYYY): \033[0m";
             if(!inputDate(checkIn,2026))
             {
                 return false;
             }
 
-            cout<<"Enter check out date (DD MM YYYY): ";
+            cout<<"\033[33mEnter check out date (DD MM YYYY): \033[0m";
             if(!inputDate(checkOut,2026))
             {
                 return false;
@@ -399,13 +399,13 @@ class Booking
 
             if(!(checkIn<checkOut))
             {
-                cout<<"Invalid booking! Check-out date should come after check-in date"<<endl;
+                cout<<"\033[31mInvalid booking! Check-out date should come after check-in date\033[0m"<<endl;
                 return false;
             }
 
             if(!roomFree(roomNumber,checkIn,checkOut))
             {
-                cout<<"Room is already booked for these dates!"<<endl;
+                cout<<"\033[31mRoom is already booked for these dates!\033[0m"<<endl;
                 return false;
             }
             return true;
@@ -431,14 +431,14 @@ class Booking
 
             if(!file)
             {
-                cout<<"Error! file not opened"<<endl;
+                cout<<"\033[31mError! file not opened\033[0m"<<endl;
                 return;
             }
 
             writeBooking(file,roomNumber,guestName,checkIn,checkOut);
             file.close();
 
-            cout<<"Booking saved successfully!"<<endl;
+            cout<<"\033[32mBooking saved successfully!\033[0m"<<endl;
         }
 };
 
@@ -450,7 +450,7 @@ class Cancel_Booking{
     public:
         void input()
         {
-            cout<<"Enter Room_no: ";
+            cout<<"\033[33mEnter Room_no: \033[0m";
             cin>>room_no;
             if(!cin)
             {
@@ -458,7 +458,7 @@ class Cancel_Booking{
                 room_no=-1;
             }
             cin.ignore(numeric_limits<streamsize>::max(),'\n');
-            cout<<"Enter Guest Name: ";
+            cout<<"\033[33mEnter Guest Name: \033[0m";
             getline(cin,guest_name);
         }
 
@@ -467,7 +467,7 @@ class Cancel_Booking{
             ifstream file("booking.txt");
             if(!file)
             {
-                cout<<"\nNo bookings found!"<<endl;
+                cout<<"\n\033[31mNo bookings found!\033[0m"<<endl;
                 return;
             }
 
@@ -500,11 +500,11 @@ class Cancel_Booking{
 
             if(idx<0)
             {
-                cout<<"\nBooking not found!"<<endl;
+                cout<<"\n\033[31mBooking not found!\033[0m"<<endl;
                 return;
             }
 
-            cout<<"\nBooking Found:\n";
+            cout<<"\n\033[32mBooking Found:\033[0m\n";
             cout<<"Room Number: "<<rn[idx]<<endl;
             cout<<"Guest Name: "<<gn[idx]<<endl;
             cout<<"Check-In: ";
@@ -514,12 +514,12 @@ class Cancel_Booking{
             outs[idx].display();
             cout<<endl;
 
-            cout<<"\nAre you sure you want to cancel the booking? (y/n): ";
+            cout<<"\n\033[33mAre you sure you want to cancel the booking? (y/n): \033[0m";
             cin>>confirm;
 
             if(confirm!='y' && confirm!='Y')
             {
-                cout<<"Cancellation aborted."<<endl;
+                cout<<"\033[31mCancellation aborted.\033[0m"<<endl;
                 return;
             }
 
@@ -533,7 +533,7 @@ class Cancel_Booking{
             }
             fo.close();
 
-            cout<<"Booking canceled successfully!"<<endl;
+            cout<<"\033[32mBooking canceled successfully!\033[0m"<<endl;
         }
 };
 
@@ -543,33 +543,33 @@ class SearchRooms{
         {
             BookingDate ci,co;
 
-            cout<<"Enter check in date (DD MM YYYY): ";
+            cout<<"\033[33mEnter check in date (DD MM YYYY): \033[0m";
             if(!inputDate(ci,2026))
             {
                 return;
             }
-            cout<<"Enter check out date (DD MM YYYY): ";
+            cout<<"\033[33mEnter check out date (DD MM YYYY): \033[0m";
             if(!inputDate(co,2026))
             {
                 return;
             }
             if(!(ci<co))
             {
-                cout<<"Check-out date should come after check-in date"<<endl;
+                cout<<"\033[31mCheck-out date should come after check-in date\033[0m"<<endl;
                 return;
             }
 
             ifstream rooms("rooms.txt");
             if(!rooms)
             {
-                cout<<"No rooms found!"<<endl;
+                cout<<"\033[31mNo rooms found!\033[0m"<<endl;
                 return;
             }
 
             int r,price,avail,found=0;
             string type;
 
-            cout<<"\n===== AVAILABLE ROOMS =====\n";
+            cout<<"\n\033[1;36m===== AVAILABLE ROOMS =====\033[0m\n";
             cout<<"Room\tType\tPrice\n";
             cout<<"-----------------------------\n";
 
@@ -584,7 +584,7 @@ class SearchRooms{
 
             if(found==0)
             {
-                cout<<"No rooms available for these dates."<<endl;
+                cout<<"033[31mNo rooms available for these dates.\033[0m"<<endl;
             }
         }
 };
@@ -609,14 +609,14 @@ class OccupancyReport{
         void show()
         {
             BookingDate target;
-            cout<<"Enter date for report (DD MM YYYY): ";
+            cout<<"\033[33mEnter date for report (DD MM YYYY): \033[0m";
             if(!inputDate(target)){
                 return;
             }
 
             ifstream rooms("rooms.txt");
             if(!rooms){
-                cout<<"No rooms found. Add rooms first!!"<<endl;
+                cout<<"\033[31mNo rooms found. Add rooms first!!\033[0m"<<endl;
                 return;
             }
 
@@ -624,9 +624,9 @@ class OccupancyReport{
             string type;
             int total=0, occupied=0;
 
-            cout<<"\n===== OCCUPANCY REPORT (";
+            cout<<"\n\033[1;36m===== OCCUPANCY REPORT (";
             target.display();
-            cout<<") =====\n";
+            cout<<") =====\033[0m\n";
             cout<<"Room\tType\tStatus\t\tGuest\n";
             cout<<"----------------------------------------------\n";
 
@@ -674,14 +674,14 @@ class RevenueReport{
         void show(){
             ifstream file("booking.txt");
             if(!file){
-                cout<<endl<<"No bookings found!"<<endl;
+                cout<<endl<<"\033[31mNo bookings found!\033[0m"<<endl;
                 return;
             }
 
             long long totalRevenue=0;
             int count=0;
 
-            cout<<endl<<"=====REVENUE REPORT====="<<endl;
+            cout<<endl<<"\033[1;36=====REVENUE REPORT=====\033[0m"<<endl;
             cout<<"Room\tGuest\t\tNights\tPrice\tAmount\n";
             cout<<"------------------------------------------------"<<endl;
 
@@ -741,22 +741,22 @@ namespace use{
         string user,pass;
         int choice=0;
 
-        cout<<endl<<"Enter 'Admin Username': ";
+        cout<<endl<<"\033[33mEnter 'Admin Username': \033[0m";
         cin>>user;
 
-        cout<<endl<<"Enter 'Admin Password': ";
+        cout<<endl<<"\033[33mEnter 'Admin Password': \033[0m";
         cin>>pass;
 
         Admin obj;
         if(pass == obj.admin_password && user == obj.admin_username){
             while(true){
                 clear();
-                cout<<"Login successful.Welcome,Admin"<<"!\n";
-                cout<<"1.Add Room\n";
+                cout<<"\033[1;32mLogin successful.Welcome,Admin"<<"!\033[0m\n";
+                cout<<"\033[34m1.Add Room\n";
                 cout<<"2.Occupancy Report\n";
                 cout<<"3.Revenue Report\n";
-                cout<<"4.Logout\n";
-                cout<<"\nEnter your choice(1-4) : ";
+                cout<<"4.Logout\n\033[0m";
+                cout<<"\n\033[33mEnter your choice(1-4) : \033[0m";
                 cin>>choice;
 
                 if(!cin){
@@ -790,7 +790,7 @@ namespace use{
                         return;
                     }
                     default:{
-                        cout<<endl<<"Wrong input!!"<<endl;
+                        cout<<endl<<"\033[31mWrong input!!\033[0m"<<endl;
                         waitKey();
                         break;
                     }
@@ -798,7 +798,7 @@ namespace use{
             }
         }
         else{
-            cout<<endl<<"Sorry Wrong username and password!!"<<endl;
+            cout<<endl<<"\033[31mSorry Wrong username and password!!\033[0m"<<endl;
             waitKey();
             return;
         }
@@ -809,40 +809,40 @@ namespace use{
         int id;
         id=getNextId();
 
-        cout<<"Enter 'Username(No Spaces)': ";
+        cout<<"\033[33mEnter 'Username(No Spaces)': \033[0m";
         cin>>user;
 
         while(usernameTaken(user)) {
-            cout<<endl<<"That username is already taken!!"<<endl;
-            cout<<endl<<"Re-enter 'Username': ";
+            cout<<endl<<"\033[31mThat username is already taken!!\033[0m"<<endl;
+            cout<<endl<<"\033[33mRe-enter 'Username': \033[0m";
             cin>>user;
         }
 
         do{
-            cout<<endl<<"Enter 'Password': ";
+            cout<<endl<<"\033[33mEnter 'Password': \033[0m";
             cin>>pass;
 
-            cout<<endl<<"Re-enter 'Password': ";
+            cout<<endl<<"\033[33mRe-enter 'Password': \033[0m";
             cin>>re_pass;
 
             if(pass!=re_pass){
-                cout<<endl<<"Password does not match!!!"<<endl;
+                cout<<endl<<"\033[31mPassword does not match!!!\033[0m"<<endl;
             }
         }while(pass!=re_pass);
 
-        cout<<endl<<"Enter 'E-mail': ";
+        cout<<endl<<"\033[33mEnter 'E-mail': \033[0m";
         cin>>email;
         while(!validEmail(email)){
-            cout<<endl<<"Wrong format of email!!"<<endl;
-            cout<<"enter 'E-mail': ";
+            cout<<endl<<"\033[31mWrong format of email!!\033[0m"<<endl;
+            cout<<"\033[33mEnter 'E-mail': \033[0m";
             cin>>email;
         }
 
-        cout<<endl<<"Enter 'Phone Number': ";
+        cout<<endl<<"\033[33mEnter 'Phone Number': \033[0m";
         cin>>phone;
         while(!validPhone(phone)){
-            cout<<endl<<"Wrong format of phone number!!"<<endl;
-            cout<<"enter 'Phone Number': ";
+            cout<<endl<<"\033[31mWrong format of phone number!!\033[0m"<<endl;
+            cout<<"\033[33mEnter 'Phone Number': \033[0m";
             cin>>phone;
         }
 
@@ -851,28 +851,28 @@ namespace use{
         fstream obj;
         obj.open(UserFile,ios::app);
         if(!obj){
-            cout<<endl<<"No directory!!"<<endl;
+            cout<<endl<<"\033[31mNo directory!!\033[0m"<<endl;
             waitKey();
             return;
         }
         obj<<o.user_id<< " " <<o.username <<" " << o.password <<" " <<o.email <<" " <<o.phone <<"\n";
         obj.close();
-        cout<<endl<<"Your Account is registered!!"<<endl;
+        cout<<endl<<"\033[32mYour Account is registered!!\033[0m"<<endl;
         waitKey();
     }
     void user_login(){
         clear();
         string name,pass;
         int choice=0;
-        cout<<"\n===Login===\n";
-        cout<<"Username: ";
+        cout<<"\n\033[1;36m===Login===\n\033[0m";
+        cout<<"\033[33mUsername: \033[0m";
         cin>>name;
-        cout<<"Password: ";
+        cout<<"\033[33mPassword: \033[0m";
         cin>>pass;
 
         ifstream in(UserFile);
         if(!in){
-            cout<<"No users registered yet!!"<<endl;
+            cout<<"\033[31mNo users registered yet!!\033[0m"<<endl;
             waitKey();
             return;
         }
@@ -888,20 +888,20 @@ namespace use{
         in.close();
 
         if(!u.status){
-            cout<<"Wrong username or password!!"<<endl;
+            cout<<"\033[31mWrong username or password!!\033[0m"<<endl;
             waitKey();
             return;
         }
 
         while(true){
             clear();
-            cout<<"Login successful.Welcome,"<<u.username<<"!"<<endl;
-            cout<<"\n===Hotel Reservation System===\n";
-            cout<<"1.Search Available Rooms\n";
+            cout<<"\033[32mLogin successful.Welcome,\033[0m"<<u.username<<"!"<<endl;
+            cout<<"\n\033[1;36m===Hotel Reservation System===\033[0m\n";
+            cout<<"\033[34m1.Search Available Rooms\n";
             cout<<"2.Book a Room\n";
             cout<<"3.Cancel a Booking\n";
-            cout<<"4.Logout\n";
-            cout<<"Enter your choice:";
+            cout<<"4.Logout\033[0m\n";
+            cout<<"\033[33mEnter your choice: \033[0m";
             cin>>choice;
 
             if(!cin){
@@ -943,7 +943,7 @@ namespace use{
                 }
                 default:
                 {
-                    cout<<"Wrong input!!"<<endl;
+                    cout<<"\033[31mWrong input!!\033[0m"<<endl;
                     waitKey();
                     break;
                 }
@@ -960,12 +960,12 @@ void login_menu(){
     while(1)
     {
         clear();
-        cout<<"\n===Login===\n";
-        cout<<"1.login\n";
+        cout<<"\033[1;36m\n===Login===\033[0m\n";
+        cout<<"\033[34m1.login\n";
         cout<<"2.Register\n";
         cout<<"3.Admin\n";
-        cout<<"4.Exit\n";
-        cout<<"Enter your choice:";
+        cout<<"4.Exit\n\033[0m";
+        cout<<"\033[33mEnter your choice: \033[0m";
         cin>>choice;
 
         if(!cin){
@@ -991,7 +991,7 @@ void login_menu(){
                 break;
             }
             default:{
-                cout << "Wrong input!!"<<endl;
+                cout << "\033[31mWrong input!!\033[0m"<<endl;
                 waitKey();
                 break;
             }
