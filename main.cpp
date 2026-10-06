@@ -5,6 +5,7 @@
 #include<limits>
 #include<cstdio>
 #include<cstdlib>
+#include<conio.h>
 
 using namespace std;
 
@@ -114,6 +115,31 @@ namespace uten{
         return false;
     }
 }
+
+string getPassword() 
+{
+    string password;
+    char ch;
+
+    while ((ch = _getch()) != '\r') 
+    { 
+        if (ch == '\b') 
+        { 
+            if (!password.empty()) 
+            {
+                password.pop_back();
+                cout << "\b \b"; 
+            }
+        } else 
+        {
+            password.push_back(ch);
+            cout << '*'; 
+        }
+    }
+    cout << endl;
+    return password;
+}
+
 
 using namespace uten;
 
@@ -745,7 +771,7 @@ namespace use{
         cin>>user;
 
         cout<<endl<<"\033[33mEnter 'Admin Password': \033[0m";
-        cin>>pass;
+        pass = getPassword();
 
         Admin obj;
         if(pass == obj.admin_password && user == obj.admin_username){
@@ -820,10 +846,10 @@ namespace use{
 
         do{
             cout<<endl<<"\033[33mEnter 'Password': \033[0m";
-            cin>>pass;
+            pass = getPassword();
 
             cout<<endl<<"\033[33mRe-enter 'Password': \033[0m";
-            cin>>re_pass;
+            re_pass=getPassword();
 
             if(pass!=re_pass){
                 cout<<endl<<"\033[31mPassword does not match!!!\033[0m"<<endl;
@@ -868,7 +894,7 @@ namespace use{
         cout<<"\033[33mUsername: \033[0m";
         cin>>name;
         cout<<"\033[33mPassword: \033[0m";
-        cin>>pass;
+        pass = getPassword();
 
         ifstream in(UserFile);
         if(!in){
