@@ -542,11 +542,11 @@ class Cancel_Booking{
 
             if(idx<0)
             {
-                cout<<C<<"\n\033[31mBooking not found!\033[0m"<<endl;
+                cout<<"\n"<<C<<"\033[31mBooking not found!\033[0m"<<endl;
                 return;
             }
 
-            cout<<C<<"\n\033[32mBooking Found:\033[0m\n";
+            cout<<C<<"\n"<<C<<"\033[32mBooking Found:\033[0m\n";
             cout<<C<<"Room Number: "<<rn[idx]<<endl;
             cout<<C<<"Guest Name: "<<gn[idx]<<endl;
             cout<<C<<"Check-In: ";
@@ -556,7 +556,7 @@ class Cancel_Booking{
             outs[idx].display();
             cout<<C<<endl;
 
-            cout<<C<<"\n\033[33mAre you sure you want to cancel the booking? (y/n): \033[0m";
+            cout<<C<<"\n"<<C<<"\033[33mAre you sure you want to cancel the booking? (y/n): \033[0m";
             cin>>confirm;
             
             if(confirm!='y' && confirm!='Y')
