@@ -4,6 +4,7 @@
 #include<vector>
 #include<limits>
 #include<cstdio>
+#include<ctime>
 #include<cstdlib>
 #include<conio.h>
 #include <ctype.h>
@@ -274,9 +275,16 @@ class BookingDate
             return (int)(toDays()-other.toDays());
         }
 
+        static BookingDate today()
+        {
+            time_t t=time(nullptr);
+            tm *lt=localtime(&t);
+            return BookingDate(lt->tm_mday,lt->tm_mon+1,lt->tm_year+1900);
+        }
+
         void display() const
         {
-            cout<<C<<day<<"/"<<month<<"/"<<year;
+            cout<<day<<"/"<<month<<"/"<<year;
         }
 
         void saveToFile(ofstream& file) const
@@ -422,6 +430,12 @@ class Booking
             cout<<C<<"\033[33mEnter check out date (DD MM YYYY): \033[0m";
             if(!inputDate(checkOut,2026))
             {
+                return false;
+            }
+            
+            if(checkIn<BookingDate::today())
+            {
+                cout<<C<<"\033[31mCheck-in date cannot be in the past!\033[0m"<<endl;
                 return false;
             }
 
@@ -579,6 +593,11 @@ class SearchRooms{
             cout<<C<<"\033[33mEnter check out date (DD MM YYYY): \033[0m";
             if(!inputDate(co,2026))
             {
+                return;
+            }
+            if(ci<BookingDate::today())
+            {
+                cout<<C<<"\033[31mCheck-in date cannot be in the past!\033[0m"<<endl;
                 return;
             }
             if(!(ci<co))
