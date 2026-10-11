@@ -544,7 +544,7 @@ class Cancel_Booking{
 
             cout<<C<<"\n\033[33mAre you sure you want to cancel the booking? (y/n): \033[0m";
             cin>>confirm;
-
+            
             if(confirm!='y' && confirm!='Y')
             {
                 cout<<C<<"\033[31mCancellation aborted.\033[0m"<<endl;
