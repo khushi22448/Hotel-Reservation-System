@@ -673,7 +673,7 @@ class OccupancyReport{
 
             cout<<C<<"\n\033[1;36m"<<C<<"===== OCCUPANCY REPORT (";
             target.display();
-            cout<<C<<") =====\033[0m\n";
+            cout<<") =====\033[0m\n";
             cout<<C<<"Room\tType\tStatus\t\tGuest\n";
             cout<<C<<"----------------------------------------------\n";
 
